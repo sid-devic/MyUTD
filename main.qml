@@ -11,7 +11,12 @@ ApplicationWindow {
     height: Screen.height
     title: qsTr("MyUTD")
 
-        Page1 {           
+    StackLayout{
+        width: parent.width
+        height: parent.height
+        currentIndex: tabBar.currentIndex
+
+        Page1 {
         }
 
         Page {
@@ -20,15 +25,15 @@ ApplicationWindow {
                 anchors.centerIn: parent
             }
         }
+    }
 
     footer: TabBar {
         id: tabBar
-        currentIndex: 0
         TabButton {
-            text: qsTr("First")
+            text: qsTr("Current Location")
         }
         TabButton {
-            text: qsTr("Second")
+            text: qsTr("Updates")
         }
     }
 }

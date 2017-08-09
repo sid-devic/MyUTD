@@ -6,9 +6,10 @@ import QtLocation 5.6;
 import QtPositioning 5.5;
 Page {
     anchors.fill: parent
+
     header: Label {
         padding: 10
-        text: qsTr("Find a cab")
+        text: qsTr("Comet Cab")
         font.pixelSize: 20
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -16,7 +17,6 @@ Page {
 
     ListModel{
         id: cabDataList
-        // default name "s" for debug
         ListElement{
             name: "s"
             latitude: 0
@@ -58,7 +58,7 @@ Page {
     Plugin {
         id: esriPlugin
         name: "esri"
-        // set min/max zoom levels
+        // set min/max zoom levels, this is why we're using esri and not osm
         PluginParameter{
             name: "esri.mapping.minimumZoomLevel"
             value: 16
