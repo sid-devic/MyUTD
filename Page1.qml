@@ -91,7 +91,7 @@ Page {
 
         PositionSource {
             id: user
-            updateInterval: 250
+            updateInterval: 2000
             active: true
 
             onPositionChanged: {
