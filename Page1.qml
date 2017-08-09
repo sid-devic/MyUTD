@@ -53,6 +53,12 @@ Page {
             longitude: 0
             color: "fuchsia"
         }
+        ListElement{
+            name: "User Position"
+            latitude: 0
+            longitude: 0
+            color: "slategray"
+        }
     }
 
     Plugin {
@@ -74,6 +80,7 @@ Page {
         plugin: esriPlugin
         anchors.fill: parent
         center {
+            // utd center
             latitude: 32.988889
             longitude: -96.748801
         }
@@ -81,6 +88,17 @@ Page {
         zoomLevel: 17
         activeMapType: supportedMapTypes[0]
         z: 0
+
+        PositionSource {
+            id: user
+            updateInterval: 250
+            active: true
+
+            onPositionChanged: {
+                cabDataList.get(6).latitude = user.position.coordinate.latitude;
+                cabDataList.get(6).longitude = user.position.coordinate.longitude;
+            }
+        }
     }
 
     Timer{
@@ -96,42 +114,42 @@ Page {
     }
     function updateCabData() {
 
-            var xmlhttp = new XMLHttpRequest();
-            var url = "http://159.203.183.245/index.html";
+        var xmlhttp = new XMLHttpRequest();
+        var url = "http://159.203.183.245/index.html";
 
-            xmlhttp.onreadystatechange=function() {
-                if (xmlhttp.readyState == XMLHttpRequest.DONE && xmlhttp.status == 200) {
-                    returnCoords(xmlhttp.responseText);
-                }
-            }
-
-            xmlhttp.open("GET", url, true);
-            xmlhttp.send();
-        }
-
-        function returnCoords(cabData) {
-            var arr = JSON.parse(cabData);
-            var devicesList = arr.devices;
-
-            for(var i = 0; i < 6; i++)
-            {
-                cabDataList.get(i).name = devicesList[i].device.toString();
-                cabDataList.get(i).latitude = parseFloat(devicesList[i].lat);
-                cabDataList.get(i).longitude = parseFloat(devicesList[i].lng);
+        xmlhttp.onreadystatechange=function() {
+            if (xmlhttp.readyState == XMLHttpRequest.DONE && xmlhttp.status == 200) {
+                returnCoords(xmlhttp.responseText);
             }
         }
 
-        function createMarkers()
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+    }
+
+    function returnCoords(cabData) {
+        var arr = JSON.parse(cabData);
+        var devicesList = arr.devices;
+
+        for(var i = 0; i < 6; i++)
         {
-            map.clearMapItems();
+            cabDataList.get(i).name = devicesList[i].device.toString();
+            cabDataList.get(i).latitude = parseFloat(devicesList[i].lat);
+            cabDataList.get(i).longitude = parseFloat(devicesList[i].lng);
+        }
+    }
 
-            for(var i = 0; i < 6; i++)
-            {
-                //can't do case insensitive string comparison inline (...easily)
-                if(cabDataList.get(i).name != "Not in Service"){
-                    if(cabDataList.get(i).name != "Not In Service"){
-                        var color = cabDataList.get(i).color;
-                        var marker = Qt.createQmlObject('import QtQuick 2.7;
+    function createMarkers()
+    {
+        map.clearMapItems();
+
+        for(var i = 0; i < 7; i++)
+        {
+            //can't do case insensitive string comparison inline (...easily)
+            if(cabDataList.get(i).name != "Not in Service"){
+                if(cabDataList.get(i).name != "Not In Service"){
+                    var color = cabDataList.get(i).color;
+                    var marker = Qt.createQmlObject('import QtQuick 2.7;
                                                  import QtQuick.Controls 2.0;
                                                  import QtQuick.Layouts 1.3;
                                                  import QtQuick.Window 2.1;
@@ -142,21 +160,21 @@ Page {
                                                  sourceItem: Rectangle { width: 10; height: 10; color: ' + "\"" + color + "\"" + '; smooth: true; radius: 5 }
                                                  coordinate {latitude: cabDataList.get(' + i + ').latitude; longitude: cabDataList.get(' + i + ').longitude } opacity:1.0; anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)}
                                                  ', map, "dynamicSnippet" + i)
-                        var text = Qt.createQmlObject('import QtQuick 2.7;
-                                                        import QtQuick.Controls 2.0;
-                                                        import QtQuick.Layouts 1.3;
-                                                        import QtQuick.Window 2.1;
-                                                        import QtLocation 5.6;
-                                                        import QtPositioning 5.5;
-                                                        MapQuickItem {
-                                                        id: zeroText;
-                                                        sourceItem: Text { text: cabDataList.get(' + i + ').name; font.family: "Helvetica"; font.pointSize: 10; color: ' + "\"" + color + "\"" + '}
-                                                        coordinate {latitude: cabDataList.get(' + i + ').latitude; longitude: cabDataList.get(' + i + ').longitude } opacity:1.0; anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height + 4)}
-                                                        ', map, "dynamicSnippet1")
-                        map.addMapItem(marker);
-                        map.addMapItem(text);
-                    }
+                    var text = Qt.createQmlObject('import QtQuick 2.7;
+                                                  import QtQuick.Controls 2.0;
+                                                  import QtQuick.Layouts 1.3;
+                                                  import QtQuick.Window 2.1;
+                                                  import QtLocation 5.6;
+                                                  import QtPositioning 5.5;
+                                                  MapQuickItem {
+                                                  id: zeroText;
+                                                  sourceItem: Text { text: cabDataList.get(' + i + ').name; font.family: "Helvetica"; font.pointSize: 10; color: ' + "\"" + color + "\"" + '}
+                                                  coordinate {latitude: cabDataList.get(' + i + ').latitude; longitude: cabDataList.get(' + i + ').longitude } opacity:1.0; anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height + 4)}
+                                                  ', map, "dynamicSnippet1")
+                    map.addMapItem(marker);
+                    map.addMapItem(text);
                 }
             }
         }
+    }
 }
