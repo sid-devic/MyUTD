@@ -116,6 +116,7 @@ Page {
             anchors.right: parent.right
             anchors.top: parent.top
             spacing: 4
+            z:20
 
             Button {
                 highlighted: true
@@ -133,16 +134,17 @@ Page {
                 onPressed: {
                     map.center.latitude = cabDataList.get(5).latitude;
                     map.center.longitude = cabDataList.get(5).longitude;
-                    messageDialog.visible = true;
                 }
             }
-            Button {
-                highlighted: true
-                anchors.right: parent.right
-                text: "Cache Map Data"
-                onPressed: {
-                    messageDialog.visible = true;
-                }
+        }
+
+        Button {
+            highlighted: true
+            anchors.right: parent.right
+            anchors.bottom: map.bottom
+            text: "Cache Map Data"
+            onPressed: {
+                messageDialog.visible = true;
             }
         }
 
