@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.3;
 import QtQuick.Window 2.1;
 import QtLocation 5.6;
 import QtPositioning 5.5;
+import QtQuick.Dialogs 1.1;
+
 Page {
     anchors.fill: parent
     header: Label {
@@ -13,6 +15,7 @@ Page {
         horizontalAlignment: Text.AlignHLeft
         verticalAlignment: Text.AlignVCenter
     }
+    property variant errorHasBeenDisplayed: false
 
 
     ListModel{
@@ -93,12 +96,25 @@ Page {
             updateAllDataTimer.start;
             map.center.latitude = cabDataList.get(6).latitude;
             map.center.longitude = cabDataList.get(6).longitude;
-            delay(5);
-            updateAllDataTimer.interval = 4000;
         }
-
+        MessageDialog {
+            id: messageDialog
+            visible: false
+            title: "Cache Map Data?"
+            text: "Caching uses a more data than usual, if you wish to preserve data switch to WiFi."
+            informativeText: "Continue with caching?"
+            standardButtons: StandardButton.Yes | StandardButton.No
+            onYes: {
+                console.log("And of course you could only agree.")
+                Qt.quit()
+            }
+            onNo:{
+                messageDialog.visible = false;
+            }
+        }
         ColumnLayout{
             anchors.right: parent.right
+            anchors.top: parent.top
             spacing: 4
 
             Button {
@@ -117,6 +133,15 @@ Page {
                 onPressed: {
                     map.center.latitude = cabDataList.get(5).latitude;
                     map.center.longitude = cabDataList.get(5).longitude;
+                    messageDialog.visible = true;
+                }
+            }
+            Button {
+                highlighted: true
+                anchors.right: parent.right
+                text: "Cache Map Data"
+                onPressed: {
+                    messageDialog.visible = true;
                 }
             }
         }
@@ -125,7 +150,6 @@ Page {
             id: user
             updateInterval: 2000
             active: true
-
             onPositionChanged: {
                 cabDataList.get(6).latitude = user.position.coordinate.latitude;
                 cabDataList.get(6).longitude = user.position.coordinate.longitude;
@@ -134,19 +158,18 @@ Page {
     }
 
 // new embedPlot.aspx delivered every ~5-6 sec
-// create a timer that starts 10ms after map finishes loading, then we change the interval so it
-// updates every 4 seconds
+
     Timer{
         id: updateAllDataTimer
-        interval: 10
+        interval: 4000
         running: true
         repeat: true
-        triggeredOnStart: false
+        triggeredOnStart: true
         onTriggered:
         {
             console.log("triggered");
             updateCabData();
-            createMarkers();
+            createMarkers();            
         }
     }
     function updateCabData() {
@@ -182,7 +205,6 @@ Page {
 
         for(var i = 0; i < 7; i++)
         {
-
             var color = cabDataList.get(i).color;
             var marker = Qt.createQmlObject('import QtQuick 2.7;
                                                  import QtQuick.Controls 2.0;
@@ -208,8 +230,6 @@ Page {
                                                   ', map, "dynamicSnippet1")
             map.addMapItem(marker);
             map.addMapItem(text);
-
-
         }
     }
 
@@ -220,5 +240,12 @@ Page {
             // Do nothing
         }
         // Duration has passed
+    }
+
+    function checkUserPosition(){
+        if(user.sourceError == 2 && !errorHasBeenDisplayed)
+        {
+
+        }
     }
 }
