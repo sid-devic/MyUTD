@@ -15,9 +15,8 @@ Page {
         horizontalAlignment: Text.AlignHLeft
         verticalAlignment: Text.AlignVCenter
     }
+
     property variant errorHasBeenDisplayed: false
-
-
     ListModel{
         // 5 cabs, the sixth index is actually position of the user
         id: cabDataList
@@ -97,19 +96,31 @@ Page {
             map.center.latitude = cabDataList.get(6).latitude;
             map.center.longitude = cabDataList.get(6).longitude;
         }
+
+
         MessageDialog {
-            id: messageDialog
+            id: cacheDialog
             visible: false
             title: "Cache Map Data?"
             text: "Caching uses a more data than usual, if you wish to preserve data switch to WiFi."
             informativeText: "Continue with caching?"
             standardButtons: StandardButton.Yes | StandardButton.No
             onYes: {
-                console.log("And of course you could only agree.")
-                Qt.quit()
+                cacheDialog.visible = false;
             }
             onNo:{
-                messageDialog.visible = false;
+                cacheData.visible = true;
+                cacheDialog.visible = false;
+            }
+        }
+        MessageDialog {
+            id: positionMissing
+            visible: false
+            title: "Location Services Disabled"
+            text: "You will not be able to see your position on the map."
+            informativeText: "You can enable location services in your device settings."
+            onAccepted: {
+                positionMissing.visible = false;
             }
         }
         ColumnLayout{
@@ -119,12 +130,14 @@ Page {
             z:20
 
             Button {
+                id: findMe;
                 highlighted: true
                 anchors.right: parent.right
                 text: "Find Me"
                 onPressed: {
                     map.center.latitude = cabDataList.get(6).latitude;
                     map.center.longitude = cabDataList.get(6).longitude;
+                    checkIfGPSWorking();
                 }
             }
             Button {
@@ -139,12 +152,15 @@ Page {
         }
 
         Button {
+            id: cacheData;
             highlighted: true
             anchors.right: parent.right
             anchors.bottom: map.bottom
             text: "Cache Map Data"
+            z: 20
             onPressed: {
-                messageDialog.visible = true;
+                cacheDialog.visible = true;
+                cacheData.visible = false;
             }
         }
 
@@ -171,7 +187,7 @@ Page {
         {
             console.log("triggered");
             updateCabData();
-            createMarkers();            
+            createMarkers();
         }
     }
     function updateCabData() {
@@ -244,10 +260,13 @@ Page {
         // Duration has passed
     }
 
-    function checkUserPosition(){
-        if(user.sourceError == 2 && !errorHasBeenDisplayed)
+    function checkIfGPSWorking(){
+        // IMPROVE LATER
+        // check if the cabDataList(6), which is the user position, is still default value.
+        // if it is, we say we don't have location services. Only triggered on start
+        if(cabDataList.get(6).latitude == 0)
         {
-
+            positionMissing.visible = true;
         }
     }
 }
