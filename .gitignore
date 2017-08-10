@@ -72,3 +72,6 @@ Thumbs.db
 
 android-build/
 android/
+*.properties
+*.properties
+*.properties~

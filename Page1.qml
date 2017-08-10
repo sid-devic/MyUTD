@@ -6,16 +6,17 @@ import QtLocation 5.6;
 import QtPositioning 5.5;
 Page {
     anchors.fill: parent
-
     header: Label {
         padding: 10
         text: qsTr("Comet Cab")
         font.pixelSize: 20
-        horizontalAlignment: Text.AlignHCenter
+        horizontalAlignment: Text.AlignHLeft
         verticalAlignment: Text.AlignVCenter
     }
 
+
     ListModel{
+        // 5 cabs, the sixth index is actually position of the user
         id: cabDataList
         ListElement{
             name: "s"
@@ -88,6 +89,37 @@ Page {
         zoomLevel: 17
         activeMapType: supportedMapTypes[0]
         z: 0
+        Component.onCompleted: {
+            updateAllDataTimer.start;
+            map.center.latitude = cabDataList.get(6).latitude;
+            map.center.longitude = cabDataList.get(6).longitude;
+            delay(5);
+            updateAllDataTimer.interval = 4000;
+        }
+
+        ColumnLayout{
+            anchors.right: parent.right
+            spacing: 4
+
+            Button {
+                highlighted: true
+                anchors.right: parent.right
+                text: "Find Me"
+                onPressed: {
+                    map.center.latitude = cabDataList.get(6).latitude;
+                    map.center.longitude = cabDataList.get(6).longitude;
+                }
+            }
+            Button {
+                highlighted: true
+                anchors.right: parent.right
+                text: "Find Cab"
+                onPressed: {
+                    map.center.latitude = cabDataList.get(5).latitude;
+                    map.center.longitude = cabDataList.get(5).longitude;
+                }
+            }
+        }
 
         PositionSource {
             id: user
@@ -101,13 +133,18 @@ Page {
         }
     }
 
+// new embedPlot.aspx delivered every ~5-6 sec
+// create a timer that starts 10ms after map finishes loading, then we change the interval so it
+// updates every 4 seconds
     Timer{
-        interval: 500
+        id: updateAllDataTimer
+        interval: 10
         running: true
         repeat: true
-        triggeredOnStart: true
+        triggeredOnStart: false
         onTriggered:
         {
+            console.log("triggered");
             updateCabData();
             createMarkers();
         }
@@ -145,11 +182,9 @@ Page {
 
         for(var i = 0; i < 7; i++)
         {
-            //can't do case insensitive string comparison inline (...easily)
-            if(cabDataList.get(i).name != "Not in Service"){
-                if(cabDataList.get(i).name != "Not In Service"){
-                    var color = cabDataList.get(i).color;
-                    var marker = Qt.createQmlObject('import QtQuick 2.7;
+
+            var color = cabDataList.get(i).color;
+            var marker = Qt.createQmlObject('import QtQuick 2.7;
                                                  import QtQuick.Controls 2.0;
                                                  import QtQuick.Layouts 1.3;
                                                  import QtQuick.Window 2.1;
@@ -160,7 +195,7 @@ Page {
                                                  sourceItem: Rectangle { width: 10; height: 10; color: ' + "\"" + color + "\"" + '; smooth: true; radius: 5 }
                                                  coordinate {latitude: cabDataList.get(' + i + ').latitude; longitude: cabDataList.get(' + i + ').longitude } opacity:1.0; anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)}
                                                  ', map, "dynamicSnippet" + i)
-                    var text = Qt.createQmlObject('import QtQuick 2.7;
+            var text = Qt.createQmlObject('import QtQuick 2.7;
                                                   import QtQuick.Controls 2.0;
                                                   import QtQuick.Layouts 1.3;
                                                   import QtQuick.Window 2.1;
@@ -171,10 +206,19 @@ Page {
                                                   sourceItem: Text { text: cabDataList.get(' + i + ').name; font.family: "Helvetica"; font.pointSize: 10; color: ' + "\"" + color + "\"" + '}
                                                   coordinate {latitude: cabDataList.get(' + i + ').latitude; longitude: cabDataList.get(' + i + ').longitude } opacity:1.0; anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height + 4)}
                                                   ', map, "dynamicSnippet1")
-                    map.addMapItem(marker);
-                    map.addMapItem(text);
-                }
-            }
+            map.addMapItem(marker);
+            map.addMapItem(text);
+
+
         }
+    }
+
+    function delay(duration) { // In milliseconds
+        var timeStart = new Date().getTime();
+
+        while (new Date().getTime() - timeStart < duration) {
+            // Do nothing
+        }
+        // Duration has passed
     }
 }
