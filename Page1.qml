@@ -108,8 +108,24 @@ Page {
             checkUserPosition();
             map.center.latitude = cabDataList.get(6).latitude;
             map.center.longitude = cabDataList.get(6).longitude;
+            stayOnCabMap.running = true;
         }
 
+        Location{
+            id: lastMapCenter
+            coordinate: {
+                latitude: 0
+                longitude: 0
+            }
+        }
+
+        Location{
+            id: currentMapCenter
+            coordinate:{
+                latitude: 0
+                longitude: 0
+            }
+        }
 
         MessageDialog {
             id: cacheDialog
@@ -197,11 +213,24 @@ Page {
         triggeredOnStart: true
         onTriggered:
         {
-            console.log("triggered");
             updateCabData();
             createMarkers();
         }
     }
+    Timer{
+        id: stayOnCabMap
+        interval: 100
+        running: false
+        repeat: true
+        triggeredOnStart: false
+        onTriggered: {
+            console.log("current: " + lastMapCenter.coordinate.latitude + " " + lastMapCenter.coordinate.longitude)
+            console.log("last: " + currentMapCenter.coordinate.latitude + " " + currentMapCenter.coordinate.longitude)
+            keepUserWithinBounds();
+
+        }
+    }
+
     function updateCabData() {
 
         var xmlhttp = new XMLHttpRequest();
@@ -284,5 +313,23 @@ Page {
         {
             positionMissing.visible = true;
         }
+    }
+
+    function keepUserWithinBounds(){
+        // sets last coordinate and current coordinate. We check if the flickable animation of the map
+        // has ended, otherwise we don't run our map.center change to bound the user within the map of UTD
+        lastMapCenter.coordinate.latitude = currentMapCenter.coordinate.latitude;
+        lastMapCenter.coordinate.longitude = currentMapCenter.coordinate.longitude;
+        currentMapCenter.coordinate.longitude = map.center.longitude;
+        currentMapCenter.coordinate.latitude = map.center.latitude;
+
+        if(map.center.latitude > 32.993859 && lastMapCenter.coordinate == currentMapCenter.coordinate)
+            map.center.latitude = 32.993859;
+        if(map.center.longitude < -96.757075 && lastMapCenter.coordinate == currentMapCenter.coordinate)
+            map.center.longitude = -96.757075;
+        if(map.center.latitude < 32.980338 && lastMapCenter.coordinate == currentMapCenter.coordinate)
+            map.center.latitude = 32.980338
+        if(map.center.longitude > -96.742024 && lastMapCenter.coordinate == currentMapCenter.coordinate)
+            map.center.longitude = -96.742024
     }
 }
