@@ -30,7 +30,7 @@ ApplicationWindow {
     footer: TabBar {
         id: tabBar
         TabButton {
-            text: qsTr("Current Location")
+            text: qsTr("Location")
         }
         TabButton {
             text: qsTr("Updates")

@@ -17,8 +17,9 @@ Page {
     }
 
     property variant errorHasBeenDisplayed: false
+
     ListModel{
-        // 5 cabs, the sixth index is actually position of the user
+        // 5 cabs, the sixth element is position of the user (so we don't need another QML object)
         id: cabDataList
         ListElement{
             name: "s"
@@ -70,8 +71,8 @@ Page {
         }
         ListElement{
             name: "User Position"
-            latitude: 0
-            longitude: 0
+            latitude: -2.5
+            longitude: -2.5
             color: "slategray"
         }
     }
@@ -82,7 +83,7 @@ Page {
         // set min/max zoom levels, this is why we're using esri and not osm
         PluginParameter{
             name: "esri.mapping.minimumZoomLevel"
-            value: 16
+            value: 15
         }
         PluginParameter{
             name: "esri.mapping.maximumZoomLevel"
@@ -96,21 +97,30 @@ Page {
         anchors.fill: parent
         center {
             // utd center
-            latitude: 32.988889
-            longitude: -96.748801
+            latitude: 32.986148492300856;
+            longitude: -96.75047601796122;
         }
         copyrightsVisible: false
-        zoomLevel: 17
+        zoomLevel: 15
         activeMapType: supportedMapTypes[0]
         z: 0
         Component.onCompleted: {
-            updateAllDataTimer.start;
+            // start out main timer, draws all cabs and updates cabDataList
+            updateAllDataTimer.running = true;
+
+            // display message to user that location not working
             checkUserPosition();
-            map.center.latitude = cabDataList.get(6).latitude;
-            map.center.longitude = cabDataList.get(6).longitude;
+
+            // start our timer that handles map repositioning if the user leaves the
+            // displayed UTD map
             stayOnCabMap.running = true;
         }
 
+        // these two coordinates are what we constantly track to keep the user within the bounds of
+        // the displayed UTD map. We need to wait until the Flickable animatino stops before changing
+        // the map.center, and the only way to know if the animation has stopped (because it is included
+        // natively in the Map QML type), is to keep track of the current map.center and see if it matches
+        // the last one. If both are equal, the animation has ended and we can reposition the map.
         Location{
             id: lastMapCenter
             coordinate: {
@@ -126,7 +136,7 @@ Page {
                 longitude: 0
             }
         }
-
+        // <--------------------------------Dialogs for various events-------------------------------->
         MessageDialog {
             id: aboutDialog
             visible: false
@@ -148,33 +158,47 @@ Page {
                 positionMissing.visible = false;
             }
         }
+        MessageDialog {
+            id: offCampus
+            visible: false
+            title: "Where are you?"
+            text: "You're not on campus!"
+            onAccepted: {
+                offCampus.visible = false;
+            }
+        }
+        // <!-----------------------------------------------------------------------------------------!>
+
         ColumnLayout{
             anchors.right: parent.right
             anchors.top: parent.top
             spacing: 4
             z:20
 
+            // recenter map on user. If they're off campus, recenter on comet cab. If GPS not enabled, nothing happens,
+            // as the user has been notified at the start of the application that they're position cannot
+            // be displayed
             Button {
                 id: findMe;
                 highlighted: true
                 anchors.right: parent.right
                 text: "Find Me"
                 onPressed: {
-                    map.center.latitude = cabDataList.get(6).latitude;
-                    map.center.longitude = cabDataList.get(6).longitude;
+                    recenterMapOnUser();
                 }
             }
+            // recenter map on cab
             Button {
                 highlighted: true
                 anchors.right: parent.right
                 text: "Find Cab"
                 onPressed: {
-                    map.center.latitude = cabDataList.get(5).latitude;
-                    map.center.longitude = cabDataList.get(5).longitude;
+                    centerMapOnCab();
                 }
             }
         }
 
+        // Button for displaying dialog containing information on the current build
         Button {
             id: about;
             highlighted: true
@@ -187,6 +211,7 @@ Page {
             }
         }
 
+        // grab position of user and put to cabDataList[6]
         PositionSource {
             id: user
             updateInterval: 2000
@@ -199,7 +224,7 @@ Page {
     }
 
     // new embedPlot.aspx delivered every ~5-6 sec
-
+    // refreshes our list of cab data (cabDataList) and draws new markers for the new data
     Timer{
         id: updateAllDataTimer
         interval: 4000
@@ -210,8 +235,11 @@ Page {
         {
             updateCabData();
             createMarkers();
+            console.log(map.center.latitude + " " + map.center.longitude)
         }
     }
+
+    // make sure the user can't leave the UTD area on the map
     Timer{
         id: stayOnCabMap
         interval: 100
@@ -229,7 +257,7 @@ Page {
     }
 
     function updateCabData() {
-
+        // http request for the website data
         var xmlhttp = new XMLHttpRequest();
         var url = "http://159.203.183.245/index.html";
 
@@ -245,6 +273,7 @@ Page {
     }
 
     function returnCoords(cabData) {
+        // JSON parsing
         var arr = JSON.parse(cabData);
         var devicesList = arr.devices;
 
@@ -262,6 +291,7 @@ Page {
 
     function createMarkers()
     {
+        // actual drawing of items on the map. We have to redraw anytime position is changed
         map.clearMapItems();
 
         for(var i = 0; i < 7; i++)
@@ -324,13 +354,15 @@ Page {
         // IMPROVE LATER
         // check if the cabDataList(6), which is the user position, is still default value.
         // if it is, we say we don't have location services. Only triggered on start
-        if(user.sourceError != 2)
+        if(user.sourceError != 3)
         {
             positionMissing.visible = true;
         }
     }
 
     function keepUserWithinBounds(){
+        // function to keep the map within the bounds of UTD
+
         // sets last coordinate and current coordinate. We check if the flickable animation of the map
         // has ended, otherwise we don't run our map.center change to bound the user within the map of UTD
         lastMapCenter.coordinate.latitude = currentMapCenter.coordinate.latitude;
@@ -346,5 +378,37 @@ Page {
             map.center.latitude = 32.980338
         if(map.center.longitude > -96.742024 && lastMapCenter.coordinate == currentMapCenter.coordinate)
             map.center.longitude = -96.742024
+    }
+
+    function centerMapOnCab(){
+        //center map on cab, default is cab 5 (commons)
+        map.center.latitude = cabDataList.get(5).latitude;
+        map.center.longitude = cabDataList.get(5).longitude;
+        map.zoomLevel = 16;
+    }
+
+    function centerMapOnUser(){
+        //center map on user
+        map.center.latitude = cabDataList.get(6).latitude;
+        map.center.longitude = cabDataList.get(6).longitude;
+        map.zoomLevel = 16;
+    }
+
+    function recenterMapOnUser(){
+        // checks if user is outside our bounded UTD map
+        if(user.valid == true){
+            if(cabDataList.get(6).latitude > 32.993859 || cabDataList.get(6).longitude < -96.757075
+                    || cabDataList.get(6).latitude < 32.980338 || map.center.longitude > -96.742024){
+                offCampus.visible = true;
+                centerMapOnCab();
+            }
+            else{
+                centerMapOnUser();
+            }
+        }
+        else{
+            console.log("Positioning services unavailible");
+            positionMissing.visible = true;
+        }
     }
 }
