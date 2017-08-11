@@ -25,36 +25,48 @@ Page {
             latitude: 0
             longitude: 0
             color: "black"
+            lastLatitude: 0
+            lastLongitude: 0
         }
         ListElement{
             name: "s"
             latitude: 0
             longitude: 0
             color: "red"
+            lastLatitude: 0
+            lastLongitude: 0
         }
         ListElement{
             name: "s"
             latitude: 0
             longitude: 0
             color: "blue"
+            lastLatitude: 0
+            lastLongitude: 0
         }
         ListElement{
             name: "s"
             latitude: 0
             longitude: 0
             color: "green"
+            lastLatitude: 0
+            lastLongitude: 0
         }
         ListElement{
             name: "s"
             latitude: 0
             longitude: 0
             color: "darkred"
+            lastLatitude: 0
+            lastLongitude: 0
         }
         ListElement{
             name: "s"
             latitude: 0
             longitude: 0
             color: "fuchsia"
+            lastLatitude: 0
+            lastLongitude: 0
         }
         ListElement{
             name: "User Position"
@@ -93,6 +105,7 @@ Page {
         z: 0
         Component.onCompleted: {
             updateAllDataTimer.start;
+            checkUserPosition();
             map.center.latitude = cabDataList.get(6).latitude;
             map.center.longitude = cabDataList.get(6).longitude;
         }
@@ -137,7 +150,6 @@ Page {
                 onPressed: {
                     map.center.latitude = cabDataList.get(6).latitude;
                     map.center.longitude = cabDataList.get(6).longitude;
-                    checkIfGPSWorking();
                 }
             }
             Button {
@@ -175,7 +187,7 @@ Page {
         }
     }
 
-// new embedPlot.aspx delivered every ~5-6 sec
+    // new embedPlot.aspx delivered every ~5-6 sec
 
     Timer{
         id: updateAllDataTimer
@@ -211,7 +223,11 @@ Page {
 
         for(var i = 0; i < 6; i++)
         {
-            cabDataList.get(i).name = devicesList[i].device.toString();
+            if(cabDataList.get(i).name == "s"){
+                cabDataList.get(i).name = devicesList[i].device.toString();
+            }
+            cabDataList.get(i).lastLatitude = cabDataList.get(i).latitude;
+            cabDataList.get(i).lastLongitude = cabDataList.get(i).longitude;
             cabDataList.get(i).latitude = parseFloat(devicesList[i].lat);
             cabDataList.get(i).longitude = parseFloat(devicesList[i].lng);
         }
@@ -260,11 +276,11 @@ Page {
         // Duration has passed
     }
 
-    function checkIfGPSWorking(){
+    function checkUserPosition(){
         // IMPROVE LATER
         // check if the cabDataList(6), which is the user position, is still default value.
         // if it is, we say we don't have location services. Only triggered on start
-        if(cabDataList.get(6).latitude == 0)
+        if(user.sourceError != 2)
         {
             positionMissing.visible = true;
         }
