@@ -128,18 +128,14 @@ Page {
         }
 
         MessageDialog {
-            id: cacheDialog
+            id: aboutDialog
             visible: false
-            title: "Cache Map Data?"
-            text: "Caching uses a more data than usual, if you wish to preserve data switch to WiFi."
-            informativeText: "Continue with caching?"
-            standardButtons: StandardButton.Yes | StandardButton.No
-            onYes: {
-                cacheDialog.visible = false;
-            }
-            onNo:{
-                cacheData.visible = true;
-                cacheDialog.visible = false;
+            title: "About"
+            text: "Version: 1.1"
+            informativeText: "Please report any bugs on the appstore!"
+            standardButtons: StandardButton.Ok
+            onAccepted: {
+                aboutDialog.visible = false;
             }
         }
         MessageDialog {
@@ -180,15 +176,14 @@ Page {
         }
 
         Button {
-            id: cacheData;
+            id: about;
             highlighted: true
             anchors.right: parent.right
             anchors.bottom: map.bottom
-            text: "Cache Map Data"
+            text: "About"
             z: 20
             onPressed: {
-                cacheDialog.visible = true;
-                cacheData.visible = false;
+                aboutDialog.visible = true;
             }
         }
 
@@ -224,10 +219,12 @@ Page {
         repeat: true
         triggeredOnStart: false
         onTriggered: {
+            // debugging for map repositioning
+            /*
             console.log("current: " + lastMapCenter.coordinate.latitude + " " + lastMapCenter.coordinate.longitude)
             console.log("last: " + currentMapCenter.coordinate.latitude + " " + currentMapCenter.coordinate.longitude)
+            */
             keepUserWithinBounds();
-
         }
     }
 
