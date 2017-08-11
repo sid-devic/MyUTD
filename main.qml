@@ -16,14 +16,11 @@ ApplicationWindow {
         height: parent.height
         currentIndex: tabBar.currentIndex
 
-        Page1 {
+        CabTracker {
         }
 
-        Page {
-            Label {
-                text: qsTr("Second page")
-                anchors.centerIn: parent
-            }
+        TwitterPage {
+
         }
     }
 
