@@ -233,6 +233,7 @@ Page {
         var xmlhttp = new XMLHttpRequest();
         var url = "http://159.203.183.245/index.html";
 
+
         xmlhttp.onreadystatechange=function() {
             if (xmlhttp.readyState == XMLHttpRequest.DONE && xmlhttp.status == 200) {
                 returnCoords(xmlhttp.responseText);
@@ -290,6 +291,23 @@ Page {
                                                   ', map, "dynamicSnippet1")
             map.addMapItem(marker);
             map.addMapItem(text);
+            /*
+            if(i != 6)
+            {
+                var lastMarker = Qt.createQmlObject('import QtQuick 2.7;
+                                                     import QtQuick.Controls 2.0;
+                                                     import QtQuick.Layouts 1.3;
+                                                     import QtQuick.Window 2.1;
+                                                     import QtLocation 5.6;
+                                                     import QtPositioning 5.5;
+                                                     MapQuickItem {
+                                                     id: zeroLastPosition;
+                                                     sourceItem: Rectangle { width: parent.width<parent.height?parent.width:parent.height height: width color: "red" border.color: "black" border.width: 1 radius: width*0.5 }
+                                                     coordinate {latitude: cabDataList.get(' + i + ').lastLatitude; longitude: cabDataList.get(' + i + ').lastLongitude } opacity:1.0; anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)}
+                                                     ', map)
+            }
+            map.addMapItem(lastMarker);
+            */
         }
     }
 
