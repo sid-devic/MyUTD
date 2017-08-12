@@ -235,7 +235,6 @@ Page {
         {
             updateCabData();
             createMarkers();
-            console.log(map.center.latitude + " " + map.center.longitude)
         }
     }
 
@@ -321,6 +320,7 @@ Page {
                                                   ', map, "dynamicSnippet1")
             map.addMapItem(marker);
             map.addMapItem(text);
+            // testing for directional marker
             /*
             if(i != 6)
             {
