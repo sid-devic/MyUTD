@@ -258,7 +258,7 @@ Page {
     function updateCabData() {
         // http request for the website data
         var xmlhttp = new XMLHttpRequest();
-        var url = "MyUTD.tk/index.html";
+        var url = "http://MyUTD.tk/index.html";
 
 
         xmlhttp.onreadystatechange=function() {
