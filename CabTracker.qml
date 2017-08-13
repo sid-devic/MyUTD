@@ -9,10 +9,22 @@ import QtQuick.Dialogs 1.1;
 Page {
     anchors.fill: parent
     header: Label {
+
+        // testing image positioning
+        /*
+        Image{
+            id: drawerIcon
+            source:"qrc:/media/ic_action_view_headline.png"
+            anchors.left: parent.left
+            verticalAlignment: parent.AlignVCenter
+        }
+        */
+        // if we switch to Rectangle headers keep z value at two so it appears on top
+        z: 2
         padding: 10
         text: qsTr("Comet Cab")
         font.pixelSize: 20
-        horizontalAlignment: Text.AlignHLeft
+        horizontalAlignment: Text.AlignHLeft /* + drawerIcon.width */
         verticalAlignment: Text.AlignVCenter
     }
 
@@ -70,7 +82,7 @@ Page {
             lastLongitude: 0
         }
         ListElement{
-            name: "User Position"
+            name: "You"
             latitude: -2.5
             longitude: -2.5
             color: "slategray"
@@ -173,7 +185,7 @@ Page {
             anchors.right: parent.right
             anchors.top: parent.top
             spacing: 4
-            z:20
+            z:1
 
             // recenter map on user. If they're off campus, recenter on comet cab. If GPS not enabled, nothing happens,
             // as the user has been notified at the start of the application that they're position cannot
@@ -205,7 +217,7 @@ Page {
             anchors.right: parent.right
             anchors.bottom: map.bottom
             text: "About"
-            z: 20
+            z: 1
             onPressed: {
                 aboutDialog.visible = true;
             }
