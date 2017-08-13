@@ -257,16 +257,15 @@ Page {
 
     function updateCabData() {
         // http request for the website data
+        // based on method from CabTracker.qml
         var xmlhttp = new XMLHttpRequest();
-        var url = "http://MyUTD.tk/index.html";
-
+        var url = "http://MyUTD.tk/location.json";
 
         xmlhttp.onreadystatechange=function() {
-            if (xmlhttp.readyState == XMLHttpRequest.DONE && xmlhttp.status == 200) {
+            if (xmlhttp.readyState === XMLHttpRequest.DONE && xmlhttp.status == 200) {
                 returnCoords(xmlhttp.responseText);
             }
         }
-
         xmlhttp.open("GET", url, true);
         xmlhttp.send();
     }

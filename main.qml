@@ -22,7 +22,8 @@ ApplicationWindow {
         TwitterPage {
 
         }
-    }
+
+  }
 
     footer: TabBar {
         id: tabBar
