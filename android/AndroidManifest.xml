@@ -57,6 +57,7 @@
                 -->
             <meta-data android:name="android.app.extract_android_style" android:value="full"/>
             <!-- extract android style -->
+
     </activity>
 
     <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->

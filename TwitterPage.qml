@@ -8,23 +8,22 @@ import QtQuick.Dialogs 1.1;
 
 Page {
     anchors.fill: parent
-    header: Label {
+    header: Rectangle {
         id: header
-        padding: 10
-        fill: true
-        text: qsTr("@UTDCometCab Twitter")
-        font.pixelSize: 20
-        horizontalAlignment: Text.AlignHLeft
-        verticalAlignment: Text.AlignVCenter
+        height: 40
+        color: "#303030"
+        Text{
+            text: qsTr("@UTDCometCab Twitter")
+            topPadding: 10
+            bottomPadding: 10
+            leftPadding: 5
+            anchors.verticalCenter: parent
+            font.pixelSize: 20
+            visible: true
+            color: "white"
+            horizontalAlignment: Text.AlignHLeft
+        }
         z: 2
-        visible: false
-    }
-    Rectangle{
-        anchors.top: parent.top
-        height: Screen.height / 13
-        width: Screen.width
-        color: Material.Dark
-        z:1
     }
 
     ListModel{
@@ -72,29 +71,16 @@ Page {
     }
 
     ListView{
+        z: 1
         width: parent.width
         height: parent.height - header.height
         model: tweets
-        z: 0
-        delegate: Rectangle{
-            height: Screen.height / 6.5
-            Text{
-                id: above
-                height: parent.height / 2
-                anchors.top: parent.top
-                text: date;
-                color: "white"
-                wrapMode: Text.Wrap
-                z: 0
-            }
-            Text{
-                height: parent.height / 2
-                anchors.top: above.bottom
-                text: message;
-                color: "white"
-                wrapMode: Text.Wrap
-                z: 0
-            }
+        delegate: Text{
+            z: 1
+            width: parent.width
+            text: date + '\n' + message + '\n \n'
+            color: "white"
+            wrapMode: Text.Wrap
         }
     }
 
