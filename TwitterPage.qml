@@ -9,11 +9,22 @@ import QtQuick.Dialogs 1.1;
 Page {
     anchors.fill: parent
     header: Label {
+        id: header
         padding: 10
+        fill: true
         text: qsTr("@UTDCometCab Twitter")
         font.pixelSize: 20
         horizontalAlignment: Text.AlignHLeft
         verticalAlignment: Text.AlignVCenter
+        z: 2
+        visible: false
+    }
+    Rectangle{
+        anchors.top: parent.top
+        height: Screen.height / 13
+        width: Screen.width
+        color: Material.Dark
+        z:1
     }
 
     ListModel{
@@ -62,11 +73,28 @@ Page {
 
     ListView{
         width: parent.width
-        height: parent.height
+        height: parent.height - header.height
         model: tweets
-        delegate: Text{
-            text: date + " message: " + message;
-            color: "white"
+        z: 0
+        delegate: Rectangle{
+            height: Screen.height / 6.5
+            Text{
+                id: above
+                height: parent.height / 2
+                anchors.top: parent.top
+                text: date;
+                color: "white"
+                wrapMode: Text.Wrap
+                z: 0
+            }
+            Text{
+                height: parent.height / 2
+                anchors.top: above.bottom
+                text: message;
+                color: "white"
+                wrapMode: Text.Wrap
+                z: 0
+            }
         }
     }
 

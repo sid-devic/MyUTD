@@ -257,7 +257,6 @@ Page {
 
     function updateCabData() {
         // http request for the website data
-        // based on method from CabTracker.qml
         var xmlhttp = new XMLHttpRequest();
         var url = "http://MyUTD.tk/location.json";
 
