@@ -24,22 +24,9 @@ ApplicationWindow {
         height: parent.height
         currentIndex: tabBar.currentIndex
 
-        CabTracker {
+        CometCabContainer {
         }
 
-        TwitterPage {
-
-        }
-
-  }
-
-    footer: TabBar {
-        id: tabBar
-        TabButton {
-            text: qsTr("Location")
-        }
-        TabButton {
-            text: qsTr("Updates")
-        }
     }
+
 }
