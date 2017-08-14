@@ -7,6 +7,9 @@ import QtPositioning 5.5;
 import QtQuick.Dialogs 1.1;
 
 Page {
+    property bool firstTimeLoadingMarkers: true
+    property bool errorHasBeenDisplayed: false
+
     anchors.fill: parent
     header: Label {
 
@@ -29,7 +32,12 @@ Page {
         verticalAlignment: Text.AlignVCenter
     }
 
-    property bool errorHasBeenDisplayed: false
+    BusyIndicator {
+        id: loadingCircle
+        running: true
+        z: 20
+        anchors.centerIn: parent
+    }
 
     ListModel{
         // 5 cabs, the sixth element is position of the user (so we don't need another QML object)
@@ -117,14 +125,6 @@ Page {
         zoomLevel: 15
         activeMapType: supportedMapTypes[0]
         z: 0
-        Component.onCompleted: {
-            // start out main timer, draws all cabs and updates cabDataList
-            updateAllDataTimer.start();
-
-            // start our timer that handles map repositioning if the user leaves the
-            // displayed UTD map
-            stayOnCabMap.start();
-        }
 
         // these two coordinates are what we constantly track to keep the user within the bounds of
         // the displayed UTD map. We need to wait until the Flickable animatino stops before changing
@@ -133,17 +133,17 @@ Page {
         // the last one. If both are equal, the animation has ended and we can reposition the map.
         Location{
             id: lastMapCenter
-            coordinate: {
-                latitude: 0
-                longitude: 0
+            coordinate {
+                latitude: 32.986148492300856
+                longitude: -96.75047601796122
             }
         }
 
         Location{
             id: currentMapCenter
-            coordinate:{
-                latitude: 0
-                longitude: 0
+            coordinate{
+                latitude: 32.986148492300856
+                longitude: -96.75047601796122
             }
         }
 
@@ -234,6 +234,16 @@ Page {
         }
     }
 
+    // Once page finishes loading, we start our timers. This is under Page item, not the Map
+    Component.onCompleted: {
+        // start out main timer, draws all cabs and updates cabDataList
+        updateAllDataTimer.start();
+
+        // start our timer that handles map repositioning if the user leaves the
+        // displayed UTD map
+        stayOnCabMap.start();
+    }
+
     // new embedPlot.aspx delivered every ~5-6 sec
     // refreshes our list of cab data (cabDataList) and draws new markers for the new data
     Timer{
@@ -263,6 +273,18 @@ Page {
             console.log("last: " + currentMapCenter.coordinate.latitude + " " + currentMapCenter.coordinate.longitude)
             */
             keepUserWithinBounds();
+        }
+    }
+
+    // timer for disabling the loading circle at the appropriate time
+    Timer{
+        id: disableLoadingCircle
+        interval: 4000
+        running: false
+        repeat: false
+        triggeredOnStart: false
+        onTriggered: {
+            loadingCircle.running = false;
         }
     }
 
@@ -329,6 +351,7 @@ Page {
                                                   ', map, "dynamicSnippet1")
             map.addMapItem(marker);
             map.addMapItem(text);
+
             // testing for directional marker
             /*
             if(i != 6)
@@ -346,17 +369,12 @@ Page {
                                                      ', map)
             }
             map.addMapItem(lastMarker);
-            */
+            */           
         }
-    }
-
-    function delay(duration) { // In milliseconds
-        var timeStart = new Date().getTime();
-
-        while (new Date().getTime() - timeStart < duration) {
-            // Do nothing
+        if(firstTimeLoadingMarkers == true){
+            disableLoadingCircle.start();
+            firstTimeLoadingMarkers = false;
         }
-        // Duration has passed
     }
 
     function keepUserWithinBounds(){

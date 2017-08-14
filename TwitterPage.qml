@@ -17,7 +17,7 @@ Page {
             topPadding: 10
             bottomPadding: 10
             leftPadding: 5
-            anchors.verticalCenter: parent
+            anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 20
             visible: true
             color: "white"

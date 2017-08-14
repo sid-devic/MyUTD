@@ -22,7 +22,7 @@ ApplicationWindow {
     StackLayout{
         width: parent.width
         height: parent.height
-        currentIndex: tabBar.currentIndex
+        //currentIndex: tabBar.currentIndex
 
         CometCabContainer {
         }
