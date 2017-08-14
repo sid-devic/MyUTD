@@ -23,6 +23,8 @@ Page {
             color: "white"
             horizontalAlignment: Text.AlignHLeft
         }
+
+        // so header is always on top
         z: 2
     }
 

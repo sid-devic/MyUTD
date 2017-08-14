@@ -15,10 +15,11 @@ Page {
         Image{
             id: drawerIcon
             source:"qrc:/media/ic_action_view_headline.png"
-            anchors.left: parent.left
-            verticalAlignment: parent.AlignVCenter
+            fillMode: Image.pad
+            horizontalAlignment: Image.AlignHCenter
+            verticalAlignment: Image.AlignVCenter
         }
-        */
+*/
         // if we switch to Rectangle headers keep z value at two so it appears on top
         z: 2
         padding: 10
@@ -118,14 +119,11 @@ Page {
         z: 0
         Component.onCompleted: {
             // start out main timer, draws all cabs and updates cabDataList
-            updateAllDataTimer.running = true;
-
-            // display message to user that location not working
-            checkUserPosition();
+            updateAllDataTimer.start();
 
             // start our timer that handles map repositioning if the user leaves the
             // displayed UTD map
-            stayOnCabMap.running = true;
+            stayOnCabMap.start();
         }
 
         // these two coordinates are what we constantly track to keep the user within the bounds of
@@ -148,12 +146,13 @@ Page {
                 longitude: 0
             }
         }
+
         // <--------------------------------Dialogs for various events-------------------------------->
         MessageDialog {
             id: aboutDialog
             visible: false
             title: "About"
-            text: "Version: 1.1"
+            text: "Version: 1.3"
             informativeText: "Please report any bugs on the appstore!"
             standardButtons: StandardButton.Ok
             onAccepted: {
@@ -264,6 +263,7 @@ Page {
             console.log("last: " + currentMapCenter.coordinate.latitude + " " + currentMapCenter.coordinate.longitude)
             */
             keepUserWithinBounds();
+            map.bearing = 0;
         }
     }
 
@@ -360,16 +360,6 @@ Page {
         // Duration has passed
     }
 
-    function checkUserPosition(){
-        // IMPROVE LATER
-        // check if the cabDataList(6), which is the user position, is still default value.
-        // if it is, we say we don't have location services. Only triggered on start
-        if(user.sourceError != 3)
-        {
-            positionMissing.visible = true;
-        }
-    }
-
     function keepUserWithinBounds(){
         // function to keep the map within the bounds of UTD
 
@@ -380,8 +370,9 @@ Page {
         currentMapCenter.coordinate.longitude = map.center.longitude;
         currentMapCenter.coordinate.latitude = map.center.latitude;
 
-        if(map.center.latitude > 32.993859 && lastMapCenter.coordinate == currentMapCenter.coordinate)
+        if(map.center.latitude > 32.993859 && lastMapCenter.coordinate == currentMapCenter.coordinate){
             map.center.latitude = 32.993859;
+        }
         if(map.center.longitude < -96.757075 && lastMapCenter.coordinate == currentMapCenter.coordinate)
             map.center.longitude = -96.757075;
         if(map.center.latitude < 32.980338 && lastMapCenter.coordinate == currentMapCenter.coordinate)
@@ -412,8 +403,12 @@ Page {
                 offCampus.visible = true;
                 centerMapOnCab();
             }
-            else{
+            else if(cabDataList.get(6).latitude <= 32.993859){
                 centerMapOnUser();
+            }
+            else{
+                console.log("Positioning services unavailible");
+                positionMissing.visible = true;
             }
         }
         else{

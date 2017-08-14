@@ -12,10 +12,12 @@ ApplicationWindow {
     title: qsTr("MyUTD")
 
     // useless here...
+    /*
     Drawer{
         width: window.width * .45
         height: window.height - header.height
     }
+    */
 
     StackLayout{
         width: parent.width
