@@ -28,6 +28,7 @@ Page {
         z: 2
     }
 
+
     ListModel{
         id: tweets
         ListElement{
@@ -77,12 +78,22 @@ Page {
         width: parent.width
         height: parent.height - header.height
         model: tweets
-        delegate: Text{
+        delegate:
+            Rectangle {
+            id: delegate
             z: 1
             width: parent.width
-            text: date + '\n' + message + '\n \n'
+            height: Screen.height / 5.5
+            radius: 10
+            border.width: 2
+            border.color: "#1dcaff"
             color: "white"
-            wrapMode: Text.Wrap
+            Text{
+                anchors.fill: parent
+                text: date + '\n' + message + '\n \n'
+                color: "#1dcaff"
+                wrapMode: Text.Wrap
+            }
         }
     }
 
