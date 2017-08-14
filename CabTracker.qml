@@ -29,7 +29,7 @@ Page {
         verticalAlignment: Text.AlignVCenter
     }
 
-    property variant errorHasBeenDisplayed: false
+    property bool errorHasBeenDisplayed: false
 
     ListModel{
         // 5 cabs, the sixth element is position of the user (so we don't need another QML object)
@@ -263,7 +263,6 @@ Page {
             console.log("last: " + currentMapCenter.coordinate.latitude + " " + currentMapCenter.coordinate.longitude)
             */
             keepUserWithinBounds();
-            map.bearing = 0;
         }
     }
 
