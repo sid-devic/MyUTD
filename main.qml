@@ -29,4 +29,10 @@ ApplicationWindow {
 
     }
 
+    // TODO:
+    // 1. Check if bug was with UBS port
+    // 2. Change about button to link to play store
+    // 3. Setting to display "Not In Service" Cabs
+    // 4. Finish up twitter display
+
 }
