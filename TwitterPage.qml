@@ -131,6 +131,12 @@ Page {
         {
             tweets.get(i).date = arr[i].created_at;
             tweets.get(i).message = arr[i].text;
+            makeDateBetter(i);
         }
+    }
+
+    function makeDateBetter(index){
+        var date = tweets.get(index).date
+        tweets.get(index).date = date.replace("+0000", "");
     }
 }

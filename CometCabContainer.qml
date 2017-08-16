@@ -19,12 +19,16 @@ Page {
         }
 
         TwitterPage {
+        }
 
+        Component.onCompleted: {
+            tabBar.visible = true;
         }
   }
 
     footer: TabBar {
         id: tabBar
+        visible: false
         TabButton {
             text: qsTr("Location")
         }
