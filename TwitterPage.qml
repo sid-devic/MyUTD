@@ -82,23 +82,36 @@ Page {
         delegate: Rectangle {
             id: delegateContainer
             width: parent.width
-            height: Screen.height / 5.5
+            height: Screen.height / 4.5
+            color: "transparent"
             Rectangle {
                 id: delegate
                 z: 1
                 anchors.top: parent.top
                 width: parent.width
-                height: parent.height / 1.8
+                height: parent.height * .75
                 radius: 10
                 border.width: 2
                 border.color: "#1dcaff"
                 color: "white"
                 Text{
-                    id: messageText
-                    anchors.fill: parent
-                    text: message
-                    color: "#1dcaff"
+                    id: dateTextObject
+                    anchors.top: parent.top
+                    topPadding: 5
+                    rightPadding: 5
+                    anchors.right: parent.right
+                    text: date
+                    color: "#c0deed"
                     wrapMode: Text.Wrap
+                }
+                Text{
+                    id: messageTextObject
+                    anchors.top: dateTextObject.bottom
+                    text: message
+                    color: "black"
+                    wrapMode: Text.Wrap
+                    width: parent.width
+                    height: parent.height
                 }
             }
         }
@@ -135,8 +148,34 @@ Page {
         }
     }
 
+    // dStr.replace("+0000 ", "") + " GMT"
     function makeDateBetter(index){
-        var date = tweets.get(index).date
-        tweets.get(index).date = date.replace("+0000", "");
+        var tdate = tweets.get(index).date
+        // have to change some stuff to make acceptable JS Date object
+        var better_date = new Date(Date.parse(tdate.replace("+0000 ", "") + " GMT"));
+
+        // user date
+        var user_date = new Date();
+
+        // difference between tweet date and current time
+        var diff = Math.floor((user_date - better_date) / 1000);
+
+        // all the cases for different times
+        if (diff <= 1) {tweets.get(index).date = "just now";}
+        if (diff < 20) {tweets.get(index).date = diff + " seconds ago";}
+        if (diff < 40) {tweets.get(index).date = "half a minute ago";}
+        if (diff < 60) {tweets.get(index).date = "less than a minute ago";}
+        if (diff <= 90) {tweets.get(index).date = "one minute ago";}
+        if (diff <= 3540) {tweets.get(index).date = Math.round(diff / 60) + " minutes ago";}
+        if (diff <= 5400) {tweets.get(index).date = "1 hour ago";}
+        if (diff <= 86400) {tweets.get(index).date = Math.round(diff / 3600) + " hours ago";}
+        if (diff <= 129600) {tweets.get(index).date = "1 day ago";}
+        if (diff < 604800) {tweets.get(index).date = Math.round(diff / 86400) + " days ago";}
+        if (diff <= 777600) {tweets.get(index).date = "1 week ago";}
+
+        // more than a week old, we display the day and month number form
+        // E.G. 6/25
+        else{tweets.get(index).date = better_date.getMonth() + "/" + better_date.getDate()}
+
     }
 }
