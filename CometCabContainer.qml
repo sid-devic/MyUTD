@@ -21,7 +21,6 @@ Page {
         TwitterPage {
 
         }
-
   }
 
     footer: TabBar {

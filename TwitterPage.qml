@@ -78,21 +78,28 @@ Page {
         width: parent.width
         height: parent.height - header.height
         model: tweets
-        delegate:
-            Rectangle {
-            id: delegate
-            z: 1
+        // we have a container to hold all the parts of each tweet, including margins
+        delegate: Rectangle {
+            id: delegateContainer
             width: parent.width
             height: Screen.height / 5.5
-            radius: 10
-            border.width: 2
-            border.color: "#1dcaff"
-            color: "white"
-            Text{
-                anchors.fill: parent
-                text: date + '\n' + message + '\n \n'
-                color: "#1dcaff"
-                wrapMode: Text.Wrap
+            Rectangle {
+                id: delegate
+                z: 1
+                anchors.top: parent.top
+                width: parent.width
+                height: parent.height / 1.8
+                radius: 10
+                border.width: 2
+                border.color: "#1dcaff"
+                color: "white"
+                Text{
+                    id: messageText
+                    anchors.fill: parent
+                    text: message
+                    color: "#1dcaff"
+                    wrapMode: Text.Wrap
+                }
             }
         }
     }

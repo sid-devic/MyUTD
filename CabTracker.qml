@@ -22,7 +22,8 @@ Page {
             horizontalAlignment: Image.AlignHCenter
             verticalAlignment: Image.AlignVCenter
         }
-*/
+        */
+
         // if we switch to Rectangle headers keep z value at two so it appears on top
         z: 2
         padding: 10
@@ -32,6 +33,7 @@ Page {
         verticalAlignment: Text.AlignVCenter
     }
 
+    // loading icon because MapQuickItem takes a while to draw...
     BusyIndicator {
         id: loadingCircle
         running: true
@@ -414,6 +416,10 @@ Page {
 
     function recenterMapOnUser(){
         // checks if user is outside our bounded UTD map
+        // if they are, centerMapOnUser(). I don't know why the user.valid works,
+        // but it checks if the GPS signal is valid, and if the signal isn't valid
+        // displays a MessageDialog to the user.
+
         if(user.valid == true){
             if(cabDataList.get(6).latitude > 32.993859 || cabDataList.get(6).longitude < -96.757075
                     || cabDataList.get(6).latitude < 32.980338 || map.center.longitude > -96.742024){
