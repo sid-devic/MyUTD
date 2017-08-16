@@ -111,7 +111,7 @@ Page {
                     color: "black"
                     wrapMode: Text.Wrap
                     width: parent.width
-                    height: parent.height
+                    height: parent.height - dateTextObject.height
                 }
             }
         }

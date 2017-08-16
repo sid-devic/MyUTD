@@ -244,6 +244,7 @@ Page {
         // start our timer that handles map repositioning if the user leaves the
         // displayed UTD map
         stayOnCabMap.start();
+
     }
 
     // new embedPlot.aspx delivered every ~5-6 sec
@@ -287,6 +288,8 @@ Page {
         triggeredOnStart: false
         onTriggered: {
             loadingCircle.running = false;
+            // displays beggining message to user if the GPS is not working correctly
+            recenterMapOnUser();
         }
     }
 
@@ -371,7 +374,7 @@ Page {
                                                      ', map)
             }
             map.addMapItem(lastMarker);
-            */           
+            */
         }
         if(firstTimeLoadingMarkers == true){
             disableLoadingCircle.start();
@@ -420,23 +423,18 @@ Page {
         // but it checks if the GPS signal is valid, and if the signal isn't valid
         // displays a MessageDialog to the user.
 
-        if(user.valid == true){
-            if(cabDataList.get(6).latitude > 32.993859 || cabDataList.get(6).longitude < -96.757075
-                    || cabDataList.get(6).latitude < 32.980338 || map.center.longitude > -96.742024){
-                offCampus.visible = true;
-                centerMapOnCab();
-            }
-            else if(cabDataList.get(6).latitude <= 32.993859){
-                centerMapOnUser();
-            }
-            else{
-                console.log("Positioning services unavailible");
-                positionMissing.visible = true;
-            }
+        if(cabDataList.get(6).latitude > 32.993859 || cabDataList.get(6).longitude < -96.757075
+                || cabDataList.get(6).latitude < 32.980338 || map.center.longitude > -96.742024){
+            offCampus.visible = true;
+            centerMapOnCab();
+        }
+        else if(cabDataList.get(6).latitude <= 32.993859){
+            centerMapOnUser();
         }
         else{
-            console.log("Positioning services unavailible");
+            console.log("Positioning services unavailable");
             positionMissing.visible = true;
         }
+
     }
 }
