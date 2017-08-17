@@ -83,6 +83,7 @@ Page {
             id: delegateContainer
             width: parent.width
             height: Screen.height / 5.5
+            color: "transparent"
             Rectangle {
                 id: delegate
                 z: 1
@@ -97,7 +98,7 @@ Page {
                     id: messageText
                     anchors.fill: parent
                     text: message
-                    color: "#1dcaff"
+                    color: "black"
                     wrapMode: Text.Wrap
                 }
             }
