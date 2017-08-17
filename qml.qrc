@@ -6,5 +6,6 @@
         <file>CabTracker.qml</file>
         <file>media/ic_action_view_headline.png</file>
         <file>CometCabContainer.qml</file>
+        <file>Twitter.js</file>
     </qresource>
 </RCC>
