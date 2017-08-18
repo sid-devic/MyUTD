@@ -11,6 +11,10 @@ ApplicationWindow {
     height: Screen.height
     title: qsTr("MyUTD")
 
+    onClosing: {
+    close.accepted = false
+    }
+
     // useless here...
     /*
     Drawer{
