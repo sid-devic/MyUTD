@@ -149,6 +149,16 @@ Page {
             }
         }
 
+        MapQuickItem{
+            id: testQuickItem
+            sourceItem: Rectangle { width: 10; height: 10; color: "black"; smooth: true; radius: 5 }
+            coordinate {
+                latitude: 32.986148492300856
+                longitude: -96.75047601796122
+            }
+            anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2);
+        }
+
         // <--------------------------------Dialogs for various events-------------------------------->
         MessageDialog {
             id: aboutDialog
@@ -244,7 +254,6 @@ Page {
         // start our timer that handles map repositioning if the user leaves the
         // displayed UTD map
         stayOnCabMap.start();
-
     }
 
     // new embedPlot.aspx delivered every ~5-6 sec
@@ -257,8 +266,10 @@ Page {
         triggeredOnStart: true
         onTriggered:
         {
+            /*
             updateCabData();
             createMarkers();
+*/
         }
     }
 
@@ -327,7 +338,7 @@ Page {
     function createMarkers()
     {
         // actual drawing of items on the map. We have to redraw anytime position is changed
-        map.clearMapItems();
+        //map.clearMapItems();
 
         for(var i = 0; i < 7; i++)
         {
@@ -387,10 +398,10 @@ Page {
 
         // sets last coordinate and current coordinate. We check if the flickable animation of the map
         // has ended, otherwise we don't run our map.center change to bound the user within the map of UTD
-        lastMapCenter.coordinate.latitude = currentMapCenter.coordinate.latitude;
-        lastMapCenter.coordinate.longitude = currentMapCenter.coordinate.longitude;
-        currentMapCenter.coordinate.longitude = map.center.longitude;
-        currentMapCenter.coordinate.latitude = map.center.latitude;
+        lastMapCenter.coordinate = currentMapCenter.coordinate;
+        //lastMapCenter.coordinate.longitude = currentMapCenter.coordinate.longitude;
+        currentMapCenter.coordinate = map.center;
+        // currentMapCenter.coordinate.latitude = map.center.latitude;
 
         if(map.center.latitude > 32.993859 && lastMapCenter.coordinate == currentMapCenter.coordinate){
             map.center.latitude = 32.993859;
@@ -408,6 +419,18 @@ Page {
         map.center.latitude = cabDataList.get(5).latitude;
         map.center.longitude = cabDataList.get(5).longitude;
         map.zoomLevel = 16;
+        var tempCoord =  Qt.createQmlObject('import QtQuick 2.7;
+                                                  import QtQuick.Controls 2.0;
+                                                  import QtLocation 5.6;
+                                                  import QtPositioning 5.5;
+                                                    Location{
+                                                        id: currentMapCenter
+                                                        coordinate{
+                                                            latitude: 32.991585
+                                                            longitude: -96.751436
+                                                        }
+                                                    }', map, "dynamicSnippet1")
+        testQuickItem.coordinate = tempCoord.coordinate;
     }
 
     function centerMapOnUser(){
