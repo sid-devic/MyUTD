@@ -4,7 +4,6 @@
         <file>qtquickcontrols2.conf</file>
         <file>TwitterPage.qml</file>
         <file>CabTracker.qml</file>
-        <file>media/ic_action_view_headline.png</file>
         <file>CometCabContainer.qml</file>
     </qresource>
 </RCC>

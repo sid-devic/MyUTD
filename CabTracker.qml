@@ -48,7 +48,6 @@ Page {
             name: "s"
             latitude: 0
             longitude: 0
-            color: "black"
             lastLatitude: 0
             lastLongitude: 0
         }
@@ -56,7 +55,6 @@ Page {
             name: "s"
             latitude: 0
             longitude: 0
-            color: "red"
             lastLatitude: 0
             lastLongitude: 0
         }
@@ -64,7 +62,6 @@ Page {
             name: "s"
             latitude: 0
             longitude: 0
-            color: "blue"
             lastLatitude: 0
             lastLongitude: 0
         }
@@ -72,7 +69,6 @@ Page {
             name: "s"
             latitude: 0
             longitude: 0
-            color: "green"
             lastLatitude: 0
             lastLongitude: 0
         }
@@ -80,7 +76,6 @@ Page {
             name: "s"
             latitude: 0
             longitude: 0
-            color: "darkred"
             lastLatitude: 0
             lastLongitude: 0
         }
@@ -88,15 +83,13 @@ Page {
             name: "s"
             latitude: 0
             longitude: 0
-            color: "fuchsia"
             lastLatitude: 0
             lastLongitude: 0
         }
         ListElement{
             name: "You"
-            latitude: -2.5
-            longitude: -2.5
-            color: "slategray"
+            latitude: 0
+            longitude: 0
         }
     }
 
@@ -148,7 +141,88 @@ Page {
                 longitude: -96.75047601796122
             }
         }
-
+        // <--------------------------------7 MapQuickItems, one for each cab and one for user-------------------------------->
+        MapQuickItem{
+            id: cab0
+            sourceItem: Rectangle { width: 10; height: 10; color: "black"; smooth: true; radius: 5 }
+            coordinate {
+                latitude: 32.986148492300856
+                longitude: -96.75047601796122
+            }
+            opacity: 1.0;
+            anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
+        }
+        MapQuickItem{
+            id: cab1
+            sourceItem: Rectangle { width: 10; height: 10; color: "red"; smooth: true; radius: 5 }
+            coordinate {
+                latitude: 0
+                longitude: 0
+            }
+            opacity: 1.0;
+            anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
+        }
+        MapQuickItem{
+            id: cab2
+            sourceItem: Rectangle { width: 10; height: 10; color: "blue"; smooth: true; radius: 5 }
+            coordinate {
+                latitude: 0
+                longitude: 0
+            }
+            opacity: 1.0;
+            anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
+        }
+        MapQuickItem{
+            id: cab3
+            sourceItem: Rectangle { width: 10; height: 10; color: "green"; smooth: true; radius: 5 }
+            coordinate {
+                latitude: 0
+                longitude: 0
+            }
+            opacity: 1.0;
+            anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
+        }
+        MapQuickItem{
+            id: cab4
+            sourceItem: Rectangle { width: 10; height: 10; color: "darkred"; smooth: true; radius: 5 }
+            coordinate {
+                latitude: 0
+                longitude: 0
+            }
+            opacity: 1.0;
+            anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
+        }
+        MapQuickItem{
+            id: cab5
+            sourceItem: Rectangle { width: 10; height: 10; color: "fuchsia"; smooth: true; radius: 5 }
+            coordinate {
+                latitude: 0
+                longitude: 0
+            }
+            opacity: 1.0;
+            anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
+        }
+        MapQuickItem{
+            id: userMarker
+            sourceItem: Rectangle { width: 10; height: 10; color: "slategrey"; smooth: true; radius: 5 }
+            coordinate {
+                latitude: 0
+                longitude: 0
+            }
+            opacity: 1.0;
+            anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
+        }
+        // <--------------------------------MapQuickItems for Name Text-------------------------------->
+        MapQuickItem {
+            id: text0;
+            sourceItem: Text { text: "test"; font.family: "Helvetica"; font.pointSize: 10; color: "black" }
+            coordinate {
+                latitude: 32.986148492300856
+                longitude: -96.75047601796122
+            }
+            opacity: 1.0;
+            anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height + 4);
+        }
         // <--------------------------------Dialogs for various events-------------------------------->
         MessageDialog {
             id: aboutDialog
@@ -257,6 +331,7 @@ Page {
         onTriggered:
         {
             updateCabData();
+            console.log(cabDataList.get(0).latitude);
             createMarkers();
         }
     }
@@ -293,7 +368,7 @@ Page {
     function updateCabData() {
         // http request for the website data
         var xmlhttp = new XMLHttpRequest();
-        var url = "http://MyUTD.tk/location.json";
+        var url = "http://159.203.183.245/location.json";
 
         xmlhttp.onreadystatechange=function() {
             if (xmlhttp.readyState === XMLHttpRequest.DONE && xmlhttp.status == 200) {
@@ -324,23 +399,23 @@ Page {
     function createMarkers()
     {
         // actual drawing of items on the map. We have to redraw anytime position is changed
-        map.clearMapItems();
 
-        for(var i = 0; i < 7; i++)
-        {
-            var color = cabDataList.get(i).color;
-            var marker = Qt.createQmlObject('import QtQuick 2.7;
+
+            var updatedLocation = Qt.createQmlObject('import QtQuick 2.7;
                                                  import QtQuick.Controls 2.0;
                                                  import QtQuick.Layouts 1.3;
                                                  import QtQuick.Window 2.1;
                                                  import QtLocation 5.6;
                                                  import QtPositioning 5.5;
-                                                 MapQuickItem {
-                                                 id: zeroMarker;
-                                                 sourceItem: Rectangle { width: 10; height: 10; color: ' + "\"" + color + "\"" + '; smooth: true; radius: 5 }
-                                                 coordinate {latitude: cabDataList.get(' + i + ').latitude; longitude: cabDataList.get(' + i + ').longitude } opacity:1.0; anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)}
-                                                 ', map, "dynamicSnippet" + i)
-            var text = Qt.createQmlObject('import QtQuick 2.7;
+                                                    Location{
+                                                                id: currentMapCenter
+                                                                coordinate{
+                                                                    latitude: cabDataList.get(0).latitude;
+                                                                    longitude: cabDataList.get(0).longitude;
+                                                                }
+                                                            }
+                                                 ', map);
+           /* var text = Qt.createQmlObject('import QtQuick 2.7;
                                                   import QtQuick.Controls 2.0;
                                                   import QtQuick.Layouts 1.3;
                                                   import QtQuick.Window 2.1;
@@ -351,9 +426,12 @@ Page {
                                                   sourceItem: Text { text: cabDataList.get(' + i + ').name; font.family: "Helvetica"; font.pointSize: 10; color: ' + "\"" + color + "\"" + '}
                                                   coordinate {latitude: cabDataList.get(' + i + ').latitude; longitude: cabDataList.get(' + i + ').longitude } opacity:1.0; anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height + 4)}
                                                   ', map, "dynamicSnippet1")
-            map.addMapItem(marker);
-            map.addMapItem(text);
 
+map.addMapItem(marker);
+            map.addMapItem(text);
+*/
+            text0.coordinate = updatedLocation.coordinate;
+            cab0.coordinate = updatedLocation.coordinate;
             // testing for directional marker
             /*
             if(i != 6)
@@ -372,7 +450,7 @@ Page {
             }
             map.addMapItem(lastMarker);
             */           
-        }
+
         if(firstTimeLoadingMarkers == true){
             disableLoadingCircle.start();
             firstTimeLoadingMarkers = false;
