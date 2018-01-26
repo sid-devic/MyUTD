@@ -296,7 +296,7 @@ Page {
     function updateCabData() {
         // http request for the website data
         var xmlhttp = new XMLHttpRequest();
-        var url = "http://MyUTD.tk/location.json";
+        var url = "http://159.203.183.245/location.json";
 
         xmlhttp.onreadystatechange=function() {
             if (xmlhttp.readyState === XMLHttpRequest.DONE && xmlhttp.status == 200) {

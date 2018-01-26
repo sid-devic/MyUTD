@@ -125,7 +125,7 @@ Page {
         // http request for the website data
         // based on method from CabTracker.qml
         var xmlhttp = new XMLHttpRequest();
-        var url = "http://MyUTD.tk/cometCabTwitter.json";
+        var url = "http://159.203.183.245/cometCabTwitter.json";
 
         xmlhttp.onreadystatechange=function() {
             if (xmlhttp.readyState === XMLHttpRequest.DONE && xmlhttp.status == 200) {
